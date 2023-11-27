@@ -14,44 +14,78 @@ module.exports = {
         }
 
     },
-    updateJob: async(req,res)=>{
+    updateJob: async (req, res) => {
         const jobId = req.params.id;
         const updated = req.body;
 
         try {
-            const updatedJob = await Job.findByIdAndUpdate(jobId,updated,{new:true});
+            const updatedJob = await Job.findByIdAndUpdate(jobId, updated, { new: true });
 
             if (!updatedJob) {
-                return res.status(404).json({status:false,message:'job not found.'});
+                return res.status(404).json({ status: false, message: 'job not found.' });
             }
-            res.status(200).json({status:true,message:'job updated successfully'});
+            res.status(200).json({ status: true, message: 'job updated successfully' });
         } catch (error) {
             res.status(500).json(error);
         }
     },
 
-    deleteJob: async(req,res)=> {
+    deleteJob: async (req, res) => {
         const jobId = req.params.id;
 
         try {
             await Job.findByIdAndDelete(jobId);
-            res.status(200).json({status:true,message:'json deleted successfully'});
+            res.status(200).json({ status: true, message: 'json deleted successfully' });
 
         } catch (error) {
             res.status(500).json(error);
         }
     },
 
-    getJob: async (req,res)=>{
+    getJob: async (req, res) => {
         const jobId = req.params.id;
 
 
         try {
-            const job = await Job.findById({_id:jobId},{createdAt:0, updatedAt:0,_v:0});
+            const job = await Job.findById({ _id: jobId }, { createdAt: 0, updatedAt: 0, __v: 0 });
             res.status(200).json(job);
+        } catch (error) {
+            res.status(500).json(error);
+
+        }
+    },
+
+    getAllJob: async (req, res) => {
+        const recent = req.query.new;
+
+        try {
+            let jobs;
+
+            if (recent) {
+                jobs= Job.find({}, { createdAt: 0, updatedAt: 0, __v: 0 }).sort({ createdAt: -1 }).limit({});
+
+            } else {
+                jobs = Job.find({}, { createdAt: 0, updatedAt: 0, __v: 0 });
+            }
+
+            res.status(200).json(jobs);
+        } catch (error) {
+            res.status(500).json(error);
+
+        }
+    },
+
+
+    searchJobs: async (req,res)=>{
+        try {
+            const results = await Job.aggregate([
+                
+            ])
         } catch (error) {
             res.status(500).json(error);
             
         }
-    },
+
+
+    }
 }
